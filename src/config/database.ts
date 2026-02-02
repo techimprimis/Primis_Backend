@@ -1,35 +1,44 @@
-import { MongoClient, ServerApiVersion, Db } from 'mongodb';
 
-const uri = process.env['MONGO_URI'] ?? ''
-console.log('MongoDB URI:', uri); // Debugging line to check the URI
-const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    },
-    tls: true,
-    tlsAllowInvalidCertificates: false,
+import { Pool } from 'pg';
+import AWS from 'aws-sdk';
+
+// Configure AWS SDK
+AWS.config.update({
+    region: process.env['AWS_REGION'] ?? 'us-east-1',
 });
 
-let db: Db;
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+const pool = new Pool({
+    host: "localhost",
+    port: 5433,          // local forwarded port
+    user: "dbuser",
+    password: "password",
+    database: "postgres"
+});
 
 const connectDB = async (): Promise<void> => {
     try {
-        await client.connect();
-        await client.db('admin').command({ ping: 1 });
-
-        db = client.db();
-
-        // eslint-disable-next-line no-console
-        console.log('MongoDB connected successfully');
+        await pool.connect();
+        const res = await pool.query('SELECT version()');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, no-console
+        console.log(res.rows[0].version);
     } catch (error) {
         // eslint-disable-next-line no-console
-        console.error('MongoDB connection error:', error);
-        process.exit(1);
+        console.error('Database error:', error);
+        throw error;
     }
 };
 
-export const getDB = (): Db => db;
-export const getClient = (): MongoClient => client;
+export const closeDatabase = async (): Promise<void> => {
+    try {
+        await pool.end();
+        // eslint-disable-next-line no-console
+        console.log('Database connection closed');
+    } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error closing database connection:', error);
+    }
+};
+
+export const getPool = (): Pool => pool;
 export default connectDB;

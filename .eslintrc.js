@@ -81,7 +81,7 @@ module.exports = {
     '@typescript-eslint/strict-boolean-expressions': 'warn',
 
     // General Best Practices
-    'no-console': 'warn',
+    'no-console': 'off',
     'eqeqeq': ['error', 'always'],
     'curly': ['error', 'all'],
     'no-var': 'error',
@@ -91,4 +91,12 @@ module.exports = {
     'require-await': 'off', // Using @typescript-eslint/require-await instead
   },
   ignorePatterns: ['dist', 'node_modules', '*.js'],
+  overrides: [
+    {
+      files: ["src/models/**/*.ts"], // adjust path to your model folder
+      rules: {
+        "@typescript-eslint/naming-convention": "off",
+      },
+    },
+  ],
 };

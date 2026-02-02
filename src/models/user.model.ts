@@ -1,7 +1,6 @@
-import { ObjectId } from 'mongodb';
 
 export interface IUser {
-  _id?: ObjectId;
+  id?: number;
   name: string;
   email: string;
   password: string;
@@ -9,4 +8,4 @@ export interface IUser {
   updatedAt: Date;
 }
 
-export const USERS_COLLECTION = 'users';
+export const USERS_TABLE = 'users';
