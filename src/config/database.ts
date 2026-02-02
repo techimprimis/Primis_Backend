@@ -7,14 +7,19 @@ AWS.config.update({
     region: process.env['AWS_REGION'] ?? 'us-east-1',
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-const pool = new Pool({
-    host: "localhost",
-    port: 5433,          // local forwarded port
-    user: "dbuser",
-    password: "password",
-    database: "postgres"
-});
+// Database configuration from environment variables
+const dbConfig = {
+    host: process.env['DB_HOST'] ?? 'localhost',
+    port: parseInt(process.env['DB_PORT'] ?? '5432', 10),
+    user: process.env['DB_USER'] ?? 'postgres',
+    password: process.env['DB_PASSWORD'],
+    database: process.env['DB_NAME'] ?? 'primisdb',
+    ssl: {
+        rejectUnauthorized: process.env['NODE_ENV'] === 'production' ? (process.env['DB_SSL_REJECT_UNAUTHORIZED'] === 'true') : false,
+    },
+};
+console.log('Database configuration:', dbConfig);
+const pool = new Pool(dbConfig);
 
 const connectDB = async (): Promise<void> => {
     try {

@@ -1,13 +1,26 @@
 import dotenv from 'dotenv';
+import path from 'path';
 
-// Load environment variables FIRST before any other imports
+// Load environment variables based on NODE_ENV
+const NODE_ENV = process.env['NODE_ENV'] ?? 'development';
+const envFile = NODE_ENV === 'production' ? '.env.production' : '.env.development';
+const envPath = path.resolve(process.cwd(), envFile);
+
+// Try to load environment-specific file, fallback to .env
+dotenv.config({ path: envPath });
+// Also load .env as fallback for any missing variables
 dotenv.config();
+
+// eslint-disable-next-line no-console
+console.log(`Environment: ${NODE_ENV}`);
+// eslint-disable-next-line no-console
+console.log(`Loaded config from: ${envFile}`);
 
 import express, { Application, Request, Response } from 'express';
 import { createServer, Server } from 'http';
 import connectDB, { closeDatabase } from './config/database';
-import { initializeMQTTController } from './controllers/mqtt.controller';
-import { initializeWebSocket, closeWebSocketServer } from './config/websocket.config';
+// import { initializeMQTTController } from './controllers/mqtt.controller';
+// import { initializeWebSocket, closeWebSocketServer } from './config/websocket.config';
 import { disconnectMQTT } from './config/mqtt.config';
 import routes from './routes';
 import { errorHandler, notFound } from './utils/errorHandler';
@@ -47,17 +60,19 @@ const startServer = async (): Promise<void> => {
             await connectDB();
             console.log('Database connected successfully');
         } catch (error) {
-            console.error('Warning: Database connection failed, continuing without database');
+            console.error('Error: Database connection failed, continuing without database');
+            throw error;
         }
 
         // Initialize MQTT Controller
-        initializeMQTTController();
+
+        // initializeMQTTController();
 
         // Create HTTP server
-        httpServer = createServer(app);
+        httpServer = createServer(app)
 
         // Initialize WebSocket server
-        initializeWebSocket(httpServer);
+        // initializeWebSocket(httpServer);
 
         // Start HTTP server with WebSocket support
         httpServer.listen(PORT, () => {
@@ -109,7 +124,7 @@ const gracefulShutdown = async (signal: string): Promise<void> => {
         }
 
         // Close WebSocket connections
-        await closeWebSocketServer();
+        // await closeWebSocketServer();
 
         // Disconnect MQTT
         disconnectMQTT();

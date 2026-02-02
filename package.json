@@ -4,10 +4,12 @@
   "description": "Express TypeScript Backend",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "debug": "nodemon --inspect src/index.ts",
+    "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev:prod": "cross-env NODE_ENV=production ts-node-dev --respawn --transpile-only src/index.ts",
+    "debug": "cross-env NODE_ENV=development nodemon --inspect src/index.ts",
     "build": "npm run lint && tsc",
-    "start": "node dist/index.js",
+    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "start:dev": "cross-env NODE_ENV=development node dist/index.js",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix"
   },
@@ -31,6 +33,7 @@
     "@types/ws": "^8.18.1",
     "@typescript-eslint/eslint-plugin": "^6.13.0",
     "@typescript-eslint/parser": "^6.13.0",
+    "cross-env": "^10.1.0",
     "eslint": "^8.55.0",
     "nodemon": "^3.0.2",
     "ts-node": "^10.9.2",
