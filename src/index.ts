@@ -19,7 +19,7 @@ console.log(`Loaded config from: ${envFile}`);
 import express, { Application, Request, Response } from 'express';
 import { createServer, Server } from 'http';
 import connectDB, { closeDatabase } from './config/database';
-// import { initializeMQTTController } from './controllers/mqtt.controller';
+import { initializeMQTTController } from './controllers/mqtt.controller';
 // import { initializeWebSocket, closeWebSocketServer } from './config/websocket.config';
 import { disconnectMQTT } from './config/mqtt.config';
 import routes from './routes';
@@ -66,7 +66,7 @@ const startServer = async (): Promise<void> => {
 
         // Initialize MQTT Controller
 
-        // initializeMQTTController();
+        initializeMQTTController();
 
         // Create HTTP server
         httpServer = createServer(app)

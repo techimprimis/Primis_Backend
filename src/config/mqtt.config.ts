@@ -8,8 +8,8 @@ export const connectMQTT = (): MqttClient => {
     }
 
     const brokerUrl = process.env['MQTT_BROKER_URL'] ?? 'mqtt://localhost:1883';
-    const username = process.env['MQTT_USERNAME'];
-    const password = process.env['MQTT_PASSWORD'];
+    const username = process.env['MQTT_USERNAME'] ?? "MQTT_USERNAME";
+    const password = process.env['MQTT_PASSWORD'] ?? "MQTT_PASSWORD";
 
     const options: mqtt.IClientOptions = {
         clientId: `primis_backend_${Math.random().toString(16).slice(2, 10)}`,

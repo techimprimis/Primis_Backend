@@ -59,7 +59,7 @@ export const saveDeviceData = async (deviceData: {
 
     // Get device by IMEI
     const device = await getDeviceByImei(deviceData.imei);
-    if (!device || typeof device.device_id !== 'number' || device.device_id === 0) {
+    if (!device || isNaN(Number(device.device_id)) || device.device_id === 0) {
         throw new Error(`Device not found with IMEI: ${deviceData.imei}`);
     }
 
@@ -88,7 +88,7 @@ export const getDeviceDataByImei = async (imei: string, limit: number = 100): Pr
 
     // Get device by IMEI
     const device = await getDeviceByImei(imei);
-    if (!device || typeof device.device_id !== 'number' || device.device_id === 0) {
+    if (!device || isNaN(Number(device.device_id)) || device.device_id === 0) {
         return [];
     }
 

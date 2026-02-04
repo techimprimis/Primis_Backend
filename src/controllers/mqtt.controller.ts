@@ -1,7 +1,7 @@
 import { MqttClient } from 'mqtt';
 import { connectMQTT } from '../config/mqtt.config';
 import * as deviceService from '../middleware/device.service';
-import { broadcastMQTTData, broadcastDeviceStatus, broadcastTelemetry } from '../config/websocket.config';
+import { broadcastDeviceStatus, broadcastTelemetry } from '../config/websocket.config';
 
 let mqttController: MQTTController | null = null;
 
@@ -79,8 +79,8 @@ export class MQTTController {
                 payload,
             });
 
-            // Broadcast MQTT data to WebSocket clients
-            broadcastMQTTData(imei, topic, payload);
+            // TODO : will Broadcast MQTT data to WebSocket clients for UI updates
+            // broadcastMQTTData(imei, topic, payload);
 
             // Handle specific topic types
             if (topic.includes('/status')) {
